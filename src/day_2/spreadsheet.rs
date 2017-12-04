@@ -32,7 +32,7 @@ impl SpreadSheet {
 
             for number in row {
                 for other_number in row {
-                    if (number == other_number) {
+                    if number == other_number {
                         continue;
                     }
 
