@@ -1,7 +1,8 @@
-mod file_reader;
+pub mod file_reader;
+mod day_1;
+
+use day_1::run_day_1;
 
 fn main() {
-    let day_1_input = file_reader::to_string_vector("./inputs/day_1.txt");
-
-    println!("{:?}", day_1_input);
+    run_day_1();
 }
