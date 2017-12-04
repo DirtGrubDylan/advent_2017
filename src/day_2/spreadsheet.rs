@@ -39,12 +39,10 @@ impl SpreadSheet {
                     if (number % other_number) == 0 {
                         sum += number / other_number;
                         division_found = true;
+                        break;
                     } else if (other_number % number) == 0 {
                         sum += other_number / number;
                         division_found = true;
-                    }
-
-                    if division_found {
                         break;
                     }
                 }
