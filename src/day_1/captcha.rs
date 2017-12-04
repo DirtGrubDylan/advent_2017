@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub struct Captcha {
-    value: String,
+    pub value: String,
 }
 
 impl Captcha {
