@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct SpreadSheet {
     pub matrix: Vec<Vec<u32>>,
 }
@@ -22,6 +23,40 @@ impl SpreadSheet {
             acc + (row.iter().max().unwrap() - row.iter().min().unwrap())
         })
     }
+
+    pub fn division_checksum(&self) -> u32 {
+        let mut sum = 0;
+
+        for row in &self.matrix {
+            let mut division_found = false;
+
+            for number in row {
+                for other_number in row {
+                    if (number == other_number) {
+                        continue;
+                    }
+
+                    if (number % other_number) == 0 {
+                        sum += number / other_number;
+                        division_found = true;
+                    } else if (other_number % number) == 0 {
+                        sum += other_number / number;
+                        division_found = true;
+                    }
+
+                    if division_found {
+                        break;
+                    }
+                }
+
+                if division_found {
+                    break;
+                }
+            }
+        }
+
+        sum
+    }
 }
 
 #[cfg(test)]
@@ -40,12 +75,19 @@ mod tests {
         assert_eq!(test_spreadsheet.matrix, expected_matrix);
     }
 
-
     #[test]
     fn test_min_max_checksum() {
         let test_input = to_string_vector("test_inputs/day_2_part_1.txt").unwrap();
         let test_spreadsheet = SpreadSheet::new(&test_input).unwrap();
 
         assert_eq!(test_spreadsheet.min_max_checksum(), 18);
+    }
+
+    #[test]
+    fn test_division_checksum() {
+        let test_input = to_string_vector("test_inputs/day_2_part_2.txt").unwrap();
+        let test_spreadsheet = SpreadSheet::new(&test_input).unwrap();
+
+        assert_eq!(test_spreadsheet.division_checksum(), 9);
     }
 }

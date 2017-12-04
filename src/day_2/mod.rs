@@ -9,4 +9,5 @@ pub fn run_day_2() {
     let spreadsheet = SpreadSheet::new(&day_2_input).unwrap();
 
     println!("Day 2, Part 1: {}", spreadsheet.min_max_checksum());
+    println!("Day 2, Part 2: {}", spreadsheet.division_checksum());
 }
