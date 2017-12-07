@@ -1,41 +1,100 @@
-pub type Grid = Vec<Vec<usize>>;
+use std::collections::HashMap;
 
+use super::element::Element;
+use super::direction::Direction;
 
-pub fn new_grid(size: usize) -> Grid {
-    let mut grid = Grid::new();
+type Location = (isize, isize);
 
-    for _ in 0..size {
-        let mut temp_vec = Vec::new();
+const OFFSETS: [Location; 8] = [
+    (0, 1),   // right
+    (-1, 1),  // top-right
+    (-1, 0),  // top
+    (-1, -1), // top-left
+    (0, -1),  // left
+    (1, -1),  // bottom-left
+    (1, 0),   // bottom
+    (1, 1),   // bottom-right
+];
 
-        for _ in 0..size {
-            temp_vec.push(0);
-        }
-
-        grid.push(temp_vec);
-    }
-
-    let mid = size / 2;
-
-    grid[mid][mid] = 1;
-
-    grid
+#[derive(Debug)]
+pub struct Grid {
+    pub data: HashMap<Location, Element>,
+    current_layer: usize,
+    current_location: Location,
 }
 
+impl Grid {
+    pub fn new() -> Grid {
+        let mut temp_map = HashMap::new();
 
-pub fn next_number_larger_in_grid(number: usize, grid: &Grid) -> usize {
-    let mut layer = 1;
-    let mut location = 1;
-    let mut coords = [0, 0];
-    let mid = grid.len() / 2;
-    let mut next_number = grid[mid][mid];
+        temp_map.insert(
+            (0, 0),
+            Element {
+                position: 1,
+                value: 1,
+            },
+        );
 
-    while next_number <= number {
-        if layer == (location * location) {
-            coords[1] += 1;
+        Grid {
+            data: temp_map,
+            current_layer: 0,
+            current_location: (0, 0),
         }
     }
 
-    unimplemented!();
+    fn next_location_for(layer: isize, location: Location) -> Location {
+        match Grid::next_direction_for(layer, location) {
+            Direction::Up => (location.0 - 1, location.1),
+            Direction::Down => (location.0 + 1, location.1),
+            Direction::Left => (location.0, location.1 - 1),
+            Direction::Right => (location.0, location.1 + 1),
+        }
+    }
+
+    fn next_direction_for(layer: isize, location: Location) -> Direction {
+        match location {
+            (x, _) if x == layer => Direction::Right,
+            (_, y) if y == -layer => Direction::Down,
+            (x, _) if x == -layer => Direction::Left,
+            _ => Direction::Up,
+        }
+    }
+
+    fn sum_of_values_around(location: Location, data: &HashMap<Location, Element>) -> usize {
+        OFFSETS.into_iter().fold(0, |acc, &(x_off, y_off)| {
+            let temp_location = (location.0 + x_off, location.1 + y_off);
+
+            match data.get(&temp_location) {
+                Some(element) => acc + element.value,
+                None => acc,
+            }
+        })
+    }
+
+    fn layer_of(location: Location) -> usize {
+        [location.0, location.1]
+            .into_iter()
+            .map(|&x| x.abs() as usize)
+            .max()
+            .unwrap()
+    }
+
+    pub fn next(&mut self) -> Element {
+        let next_location =
+            Grid::next_location_for(self.current_layer as isize, self.current_location);
+
+        let next_element = Element {
+            position: self.data.get(&self.current_location).unwrap().position + 1,
+            value: Grid::sum_of_values_around(next_location, &self.data),
+        };
+
+
+        self.data.insert(next_location, next_element.clone());
+        self.current_layer = Grid::layer_of(next_location);
+        self.current_location = next_location;
+
+        next_element
+    }
 }
 
 
@@ -44,25 +103,123 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new_grid() {
-        let expected_grid: Vec<Vec<usize>> = vec![
-            vec![0, 0, 0, 0, 0],
-            vec![0, 0, 0, 0, 0],
-            vec![0, 0, 1, 0, 0],
-            vec![0, 0, 0, 0, 0],
-            vec![0, 0, 0, 0, 0],
-        ];
+    fn test_next_direction_for() {
+        // Random cases
+        assert_eq!(Grid::next_direction_for(2, (0, 2)), Direction::Up);
+        assert_eq!(Grid::next_direction_for(3, (1, -3)), Direction::Down);
+        assert_eq!(Grid::next_direction_for(4, (-4, 4)), Direction::Left);
+        assert_eq!(Grid::next_direction_for(0, (0, 0)), Direction::Right);
 
-        assert_eq!(new_grid(5), expected_grid);
+        // Corner cases
+        assert_eq!(Grid::next_direction_for(5, (4, 5)), Direction::Up);
+        assert_eq!(Grid::next_direction_for(5, (-5, 5)), Direction::Left);
+        assert_eq!(Grid::next_direction_for(5, (-5, -5)), Direction::Down);
+        assert_eq!(Grid::next_direction_for(5, (5, -5)), Direction::Right);
+        assert_eq!(Grid::next_direction_for(5, (5, 5)), Direction::Right);
     }
 
     #[test]
-    fn test_next_number_larger_in_grid() {
-        let test_grid = new_grid(5);
+    fn test_next_location_for() {
+        // Random cases
+        assert_eq!(Grid::next_location_for(2, (0, 2)), (-1, 2));
+        assert_eq!(Grid::next_location_for(3, (1, -3)), (2, -3));
+        assert_eq!(Grid::next_location_for(4, (-4, 4)), (-4, 3));
+        assert_eq!(Grid::next_location_for(0, (0, 0)), (0, 1));
 
-        assert_eq!(next_number_larger_in_grid(2, &test_grid), 4);
-        assert_eq!(next_number_larger_in_grid(3, &test_grid), 4);
-        assert_eq!(next_number_larger_in_grid(6, &test_grid), 10);
-        assert_eq!(next_number_larger_in_grid(750, &test_grid), 806);
+        // Corner cases
+        assert_eq!(Grid::next_location_for(5, (4, 5)), (3, 5));
+        assert_eq!(Grid::next_location_for(5, (-5, 5)), (-5, 4));
+        assert_eq!(Grid::next_location_for(5, (-5, -5)), (-4, -5));
+        assert_eq!(Grid::next_location_for(5, (5, -5)), (5, -4));
+        assert_eq!(Grid::next_location_for(5, (5, 5)), (5, 6));
+    }
+
+    #[test]
+    fn test_sum_of_values_around() {
+        let mut test_map = HashMap::new();
+
+        test_map.insert(
+            (0, 0),
+            Element {
+                position: 1,
+                value: 1,
+            },
+        );
+        test_map.insert(
+            (0, 1),
+            Element {
+                position: 2,
+                value: 1,
+            },
+        );
+        test_map.insert(
+            (-1, 1),
+            Element {
+                position: 3,
+                value: 2,
+            },
+        );
+
+        assert_eq!(Grid::sum_of_values_around((-1, 0), &test_map), 4);
+
+        test_map.insert(
+            (-1, 0),
+            Element {
+                position: 4,
+                value: 4,
+            },
+        );
+
+        assert_eq!(Grid::sum_of_values_around((-1, -1), &test_map), 5);
+    }
+
+    #[test]
+    fn test_layer_of() {
+        assert_eq!(Grid::layer_of((0, 0)), 0);
+        assert_eq!(Grid::layer_of((-5, 4)), 5);
+        assert_eq!(Grid::layer_of((-4, -5)), 5);
+        assert_eq!(Grid::layer_of((5, 4)), 5);
+        assert_eq!(Grid::layer_of((4, 5)), 5);
+    }
+
+    #[test]
+    fn test_next() {
+        let mut test_grid = Grid::new();
+
+        assert_eq!(
+            test_grid.next(),
+            Element {
+                position: 2,
+                value: 1,
+            }
+        );
+        assert_eq!(
+            test_grid.next(),
+            Element {
+                position: 3,
+                value: 2,
+            }
+        );
+        assert_eq!(
+            test_grid.next(),
+            Element {
+                position: 4,
+                value: 4,
+            }
+        );
+        assert_eq!(
+            test_grid.next(),
+            Element {
+                position: 5,
+                value: 5,
+            }
+        );
+        assert_eq!(
+            test_grid.next(),
+            Element {
+                position: 6,
+                value: 10,
+            }
+        );
     }
 }
