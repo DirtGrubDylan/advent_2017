@@ -8,6 +8,8 @@ fn print_seperator() {
 }
 
 fn main() {
+    print_seperator();
+
     day_1::run_day_1();
     print_seperator();
 
