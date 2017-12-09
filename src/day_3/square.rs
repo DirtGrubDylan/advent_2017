@@ -19,9 +19,7 @@ impl Square {
 
         let dist = [0, 1, 2, 3]
             .into_iter()
-            .map(|&x| {
-                ((self.id as isize) - (starting_mid_point + x * (temp_root - 1))).abs()
-            })
+            .map(|&x| ((self.id as isize) - (starting_mid_point + x * (temp_root - 1))).abs())
             .min()
             .unwrap();
 

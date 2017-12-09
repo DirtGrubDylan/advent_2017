@@ -27,13 +27,11 @@ impl Grid {
     pub fn new() -> Grid {
         let mut temp_map = HashMap::new();
 
-        temp_map.insert(
-            (0, 0),
-            Element {
-                position: 1,
-                value: 1,
-            },
-        );
+        temp_map.insert((0, 0),
+                        Element {
+                            position: 1,
+                            value: 1,
+                        });
 
         Grid {
             data: temp_map,
@@ -80,8 +78,8 @@ impl Grid {
     }
 
     pub fn next(&mut self) -> Element {
-        let next_location =
-            Grid::next_location_for(self.current_layer as isize, self.current_location);
+        let next_location = Grid::next_location_for(self.current_layer as isize,
+                                                    self.current_location);
 
         let next_element = Element {
             position: self.data.get(&self.current_location).unwrap().position + 1,
@@ -138,37 +136,29 @@ mod tests {
     fn test_sum_of_values_around() {
         let mut test_map = HashMap::new();
 
-        test_map.insert(
-            (0, 0),
-            Element {
-                position: 1,
-                value: 1,
-            },
-        );
-        test_map.insert(
-            (0, 1),
-            Element {
-                position: 2,
-                value: 1,
-            },
-        );
-        test_map.insert(
-            (-1, 1),
-            Element {
-                position: 3,
-                value: 2,
-            },
-        );
+        test_map.insert((0, 0),
+                        Element {
+                            position: 1,
+                            value: 1,
+                        });
+        test_map.insert((0, 1),
+                        Element {
+                            position: 2,
+                            value: 1,
+                        });
+        test_map.insert((-1, 1),
+                        Element {
+                            position: 3,
+                            value: 2,
+                        });
 
         assert_eq!(Grid::sum_of_values_around((-1, 0), &test_map), 4);
 
-        test_map.insert(
-            (-1, 0),
-            Element {
-                position: 4,
-                value: 4,
-            },
-        );
+        test_map.insert((-1, 0),
+                        Element {
+                            position: 4,
+                            value: 4,
+                        });
 
         assert_eq!(Grid::sum_of_values_around((-1, -1), &test_map), 5);
     }
@@ -186,40 +176,30 @@ mod tests {
     fn test_next() {
         let mut test_grid = Grid::new();
 
-        assert_eq!(
-            test_grid.next(),
-            Element {
-                position: 2,
-                value: 1,
-            }
-        );
-        assert_eq!(
-            test_grid.next(),
-            Element {
-                position: 3,
-                value: 2,
-            }
-        );
-        assert_eq!(
-            test_grid.next(),
-            Element {
-                position: 4,
-                value: 4,
-            }
-        );
-        assert_eq!(
-            test_grid.next(),
-            Element {
-                position: 5,
-                value: 5,
-            }
-        );
-        assert_eq!(
-            test_grid.next(),
-            Element {
-                position: 6,
-                value: 10,
-            }
-        );
+        assert_eq!(test_grid.next(),
+                   Element {
+                       position: 2,
+                       value: 1,
+                   });
+        assert_eq!(test_grid.next(),
+                   Element {
+                       position: 3,
+                       value: 2,
+                   });
+        assert_eq!(test_grid.next(),
+                   Element {
+                       position: 4,
+                       value: 4,
+                   });
+        assert_eq!(test_grid.next(),
+                   Element {
+                       position: 5,
+                       value: 5,
+                   });
+        assert_eq!(test_grid.next(),
+                   Element {
+                       position: 6,
+                       value: 10,
+                   });
     }
 }

@@ -5,9 +5,7 @@ pub struct Captcha {
 
 impl Captcha {
     pub fn new(captch_value: &str) -> Captcha {
-        Captcha {
-            value: captch_value.to_owned(),
-        }
+        Captcha { value: captch_value.to_owned() }
     }
 
     pub fn sum(&self, step_size: usize) -> u32 {
