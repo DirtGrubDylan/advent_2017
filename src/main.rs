@@ -1,3 +1,5 @@
+#![feature(entry_and_modify)]
+
 pub mod file_reader;
 mod day_1;
 mod day_2;
