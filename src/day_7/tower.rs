@@ -27,14 +27,18 @@ impl Tower {
             .clone()
     }
 
-    pub fn unbalanced_program(&self) -> Option<(Program, isize)> {
-        for program in self.programs.values() {
-            if let Some(unbalanced_program) = program.unbalanced_program_on_disk(&self.programs) {
-                return Some(unbalanced_program);
-            }
+    pub fn unbalanced_program(&self) -> (Program, isize) {
+        let mut current_program = self.lowest_program();
+        let mut current_offset = 0;
+        let mut unbalanced_info = current_program.unbalanced_tower(&self.programs);
+
+        while let Some((temp_program, temp_offset)) = unbalanced_info {
+            current_program = temp_program;
+            current_offset = temp_offset;
+            unbalanced_info = current_program.unbalanced_tower(&self.programs);
         }
 
-        None
+        (current_program, current_offset)
     }
 }
 
@@ -55,7 +59,7 @@ mod tests {
     fn test_unbalanced_program() {
         let test_tower = Tower::new(&(to_string_vector("test_inputs/day_7_part_1.txt").unwrap()));
         let expected = 60;
-        let tested = test_tower.unbalanced_program().unwrap();
+        let tested = test_tower.unbalanced_program();
         let tested = (tested.0.weight as isize) + tested.1;
 
         assert_eq!(tested, expected);

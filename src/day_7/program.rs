@@ -46,10 +46,7 @@ impl Program {
         }
     }
 
-    pub fn unbalanced_program_on_disk(
-        &self,
-        tower: &HashMap<String, Program>,
-    ) -> Option<(Program, isize)> {
+    pub fn unbalanced_tower(&self, tower: &HashMap<String, Program>) -> Option<(Program, isize)> {
         let mut counter: HashMap<isize, (Program, usize)> = HashMap::new();
 
         for program_name in &self.disc {
@@ -145,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unbalanced_program_on_disk() {
+    fn test_unbalanced_tower() {
         let mut test_map: HashMap<String, Program> = HashMap::new();
 
         for program_data in to_string_vector("test_inputs/day_7_part_1.txt").unwrap() {
@@ -157,17 +154,11 @@ mod tests {
         let expected = Some((Program::new("ugml (68) -> gyxo, ebii, jptl"), -8));
 
         assert_eq!(
-            test_map
-                .get("ugml")
-                .unwrap()
-                .unbalanced_program_on_disk(&test_map),
+            test_map.get("ugml").unwrap().unbalanced_tower(&test_map),
             None
         );
         assert_eq!(
-            test_map
-                .get("tknk")
-                .unwrap()
-                .unbalanced_program_on_disk(&test_map),
+            test_map.get("tknk").unwrap().unbalanced_tower(&test_map),
             expected
         );
     }

@@ -10,7 +10,7 @@ pub fn run_day_7() {
 
     println!("Day 7, Part 1: {}", tower.lowest_program().name);
 
-    let (unblanced_program, offset) = tower.unbalanced_program().unwrap();
+    let (unblanced_program, offset) = tower.unbalanced_program();
 
     let unblanced_program_new_weight = (unblanced_program.weight as isize) + offset;
 
