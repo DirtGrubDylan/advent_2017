@@ -1,5 +1,6 @@
-use super::registers::Registers;
+use std::collections::HashMap;
 
+#[derive(Debug, PartialEq)]
 pub struct Conditional {
     register_name: String,
     operation: String,
@@ -15,10 +16,18 @@ impl Conditional {
         }
     }
 
-    pub fn is_true(&self, registers: &Registers) -> bool {
-        let register_value = registers.value_of_register(&self.register_name);
+    pub fn is_true(&self, registers: &HashMap<String, isize>) -> bool {
+        let register_value = *(registers.get(&self.register_name).unwrap_or(&0));
 
-        unimplemented!();
+        match self.operation.as_str() {
+            ">" => register_value > self.value,
+            ">=" => register_value >= self.value,
+            "<" => register_value < self.value,
+            "<=" => register_value <= self.value,
+            "==" => register_value == self.value,
+            "!=" => register_value != self.value,
+            _ => false
+        }
     }
 }
 
@@ -26,4 +35,17 @@ impl Conditional {
 mod tests {
     use super::*;
 
+    #[test]
+    fn test_is_true() {
+        let mut registers = HashMap::new();
+
+        registers.insert(String::from("a"), 1);
+
+        let test_data: Vec<bool> = [">", ">=", "<", "<=", "==", "!="].into_iter()
+            .map(|s| Conditional::new("a", s, 1).is_true(&registers))
+            .collect();
+        let expected = vec![false, true, false, true, true, false];
+
+        assert_eq!(test_data, expected);
+    }
 }
