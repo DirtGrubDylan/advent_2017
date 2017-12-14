@@ -12,4 +12,5 @@ pub fn run_day_8() {
     registers.run_instructions();
 
     println!("Day 8, Part 1: {}", registers.largest_register());
+    println!("Day 8, Part 2: {}", registers.highest_register_value_achieved);
 }
