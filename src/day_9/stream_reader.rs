@@ -1,41 +1,47 @@
-use std::str::Chars;
+use super::stream_reader_info::StreamReaderInfo;
 
 pub struct StreamReader {
-    inner: String,
+    pub info: StreamReaderInfo,
 }
 
 impl StreamReader {
-    pub fn new(stream: &str) -> StreamReader {
+    pub fn new() -> StreamReader {
         StreamReader {
-            inner: String::from(stream),
+            info: StreamReaderInfo::new(),
         }
     }
 
-    pub fn total_group_score(&self) -> usize {
-        let mut depth = 1;
-        let mut score = 0;
-        let mut is_garbage = false;
-        let mut skip = false;
-
-        for c in self.inner.chars() {
-            match c {
-                '{' => {
-                    if !is_garbage {
-                        score += depth;
-                        depth += 1;
-                    }
-                }
-                '<' => {
-                    is_garbage = true;
-                }
-                '>' => {
-                    is_garbage = false;
-                }
-                _ => {}
-            }
+    pub fn read_stream(&mut self, stream: &str) {
+        for c in stream.chars() {
+            StreamReader::handle_character(c, &mut self.info);
         }
+    }
 
-        score
+    fn handle_character(c: char, stream_info: &mut StreamReaderInfo) {
+        match c {
+            _ if stream_info.skip => {
+                stream_info.skip = false;
+            }
+            '{' if !stream_info.is_garbage => {
+                stream_info.score += stream_info.depth;
+                stream_info.depth += 1;
+            }
+            '}' if !stream_info.is_garbage => {
+                stream_info.depth -= 1;
+            }
+            '<' if !stream_info.is_garbage => {
+                stream_info.is_garbage = true;
+            }
+            '>' => {
+                stream_info.is_garbage = false;
+            }
+            '!' => {
+                stream_info.skip = true;
+            }
+            _ => if stream_info.is_garbage {
+                stream_info.garbage_char_count += 1;
+            },
+        }
     }
 }
 
@@ -50,10 +56,63 @@ mod tests {
 
         let test_scores: Vec<usize> = test_data
             .iter()
-            .map(|s| StreamReader::new(s).total_group_score())
+            .map(|s| {
+                let mut temp_reader = StreamReader::new();
+                temp_reader.read_stream(s);
+                temp_reader.info.score
+            })
             .collect();
         let expected = vec![1, 6, 5, 16, 1, 9, 9, 3];
 
         assert_eq!(test_scores, expected);
+    }
+
+    #[test]
+    fn test_total_garbage_chars() {
+        let test_data = to_string_vector("test_inputs/day_9_part_2.txt").unwrap();
+
+        let test_scores: Vec<usize> = test_data
+            .iter()
+            .map(|s| {
+                let mut temp_reader = StreamReader::new();
+                temp_reader.read_stream(s);
+                temp_reader.info.garbage_char_count
+            })
+            .collect();
+        let expected = vec![0, 17, 3, 2, 0, 0, 10];
+
+        assert_eq!(test_scores, expected);
+    }
+
+    #[test]
+    fn test_handle_character() {
+        let mut stream_info = StreamReaderInfo::new();
+
+        StreamReader::handle_character('{', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (2, 1, 0, false, false));
+
+        StreamReader::handle_character('{', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (3, 3, 0, false, false));
+
+        StreamReader::handle_character('<', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (3, 3, 0, true, false));
+
+        StreamReader::handle_character('a', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (3, 3, 1, true, false));
+
+        StreamReader::handle_character('!', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (3, 3, 1, true, true));
+
+        StreamReader::handle_character('!', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (3, 3, 1, true, false));
+
+        StreamReader::handle_character('>', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (3, 3, 1, false, false));
+
+        StreamReader::handle_character('}', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (2, 3, 1, false, false));
+
+        StreamReader::handle_character('}', &mut stream_info);
+        assert_eq!(stream_info.to_tuple(), (1, 3, 1, false, false));
     }
 }
