@@ -10,6 +10,7 @@ mod day_6;
 mod day_7;
 mod day_8;
 mod day_9;
+mod day_10;
 
 fn print_seperator() {
     println!("-------------------------------");
@@ -43,5 +44,8 @@ fn main() {
     print_seperator();
 
     day_9::run_day_9();
+    print_seperator();
+
+    day_10::run_day_10();
     print_seperator();
 }
