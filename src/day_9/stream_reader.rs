@@ -13,7 +13,7 @@ impl StreamReader {
 
     pub fn read_stream(&mut self, stream: &str) {
         for c in stream.chars() {
-            StreamReader::handle_character(c, &mut self.info);
+            Self::handle_character(c, &mut self.info);
         }
     }
 
