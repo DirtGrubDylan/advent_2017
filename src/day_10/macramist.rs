@@ -9,26 +9,21 @@ impl Macramist {
         }
     }
 
-    pub fn tie_with_lengths(
-        &mut self,
-        step: &mut usize,
-        current_position: &mut usize,
-        lengths: &[usize],
-    ) {
+    pub fn tie_with_lengths(&mut self, step: &mut usize, position: &mut usize, lengths: &[usize]) {
         for &length in lengths {
             let mut temp_vec = Vec::new();
 
             for mut index in 0..length {
-                index = (*current_position + index) % self.inner.len();
+                index = (*position + index) % self.inner.len();
                 temp_vec.push(self.inner[index]);
             }
 
             for mut index in 0..length {
-                index = (*current_position + index) % self.inner.len();
+                index = (*position + index) % self.inner.len();
                 self.inner[index] = temp_vec.pop().unwrap();
             }
 
-            *current_position += length + *step;
+            *position += length + *step;
             *step += 1;
         }
     }
