@@ -75,7 +75,17 @@ mod tests {
     fn test_hash() {
         let mut test_macramist = Macramist::new(256);
 
-        unimplemented!();
+        assert_eq!(test_macramist.hash(""), "a2582a3a0e66e6e86e3812dcb672a272");
+        test_macramist.reset();
+
+        assert_eq!(test_macramist.hash("AoC 2017"), "33efeb34ea91902bb2f59c9920caa6cd");
+        test_macramist.reset();
+
+        assert_eq!(test_macramist.hash("1,2,3"), "3efbe78a8d82f29979031a4aa0b16a9d");
+        test_macramist.reset();
+
+        assert_eq!(test_macramist.hash("1,2,4"), "63960835bcdc130f0b66d7ff4f6a5a8e");
+        test_macramist.reset();
     }
 
     #[test]
