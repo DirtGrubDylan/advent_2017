@@ -9,6 +9,24 @@ impl Macramist {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.inner = (0..self.inner.len()).collect();
+    }
+
+    pub fn hash(&mut self, input: &str) -> String{
+        let mut step = 0;
+        let mut current_position = 0;
+        let mut ascii_lengths: Vec<usize> = input.chars().map(|c| c as usize).collect();
+
+        ascii_lengths.extend_from_slice(&[17, 31, 73, 47, 23]);
+
+        for _ in 0..64 {
+            self.tie_with_lengths(&mut step, &mut current_position, &ascii_lengths);
+        }
+
+        self.xor_hash()
+    }
+
     pub fn tie_with_lengths(&mut self, step: &mut usize, position: &mut usize, lengths: &[usize]) {
         for &length in lengths {
             let mut temp_vec = Vec::new();
@@ -52,6 +70,13 @@ impl Macramist {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_hash() {
+        let mut test_macramist = Macramist::new(256);
+
+        unimplemented!();
+    }
 
     #[test]
     fn test_tie_with_lengths() {
