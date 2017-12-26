@@ -1,4 +1,4 @@
-mod macramist;
+pub mod macramist;
 
 use file_reader::to_string_vector;
 use self::macramist::Macramist;
