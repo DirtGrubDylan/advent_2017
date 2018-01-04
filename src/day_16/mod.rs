@@ -17,9 +17,7 @@ pub fn run_day_16() {
 
     println!("Day 16, Part 1: {}", dance.dancers.iter().collect::<String>());
 
-    let mut dance = Dance::new(&moves, &dancers);
-
-    dance.dance_n_times(1_000_000_000);
+    dance.dance_n_times(999_999_999);
 
     println!("Day 16, Part 2: {}", dance.dancers.iter().collect::<String>());
 }
