@@ -1,4 +1,4 @@
-use std::collections::{VecDeque, HashMap};
+use std::collections::{HashMap, VecDeque};
 
 use super::dance_moves::DanceMove;
 
@@ -54,7 +54,7 @@ impl Dance {
                     seen_patterns.insert(self.dancers.clone(), n);
                     n += 1;
                     self.dance();
-                },
+                }
                 Some(&x) => {
                     self.dancers = temp_v;
 
