@@ -18,7 +18,7 @@ impl Judge {
         let mask = self.mask;
         let mut number_of_matching_values = 0;
 
-        for iteration in 0..number_of_iterations {
+        for _ in 0..number_of_iterations {
             let mut temp_values: Vec<usize> = self.generators
                 .iter_mut()
                 .map(|g| g.next().unwrap() & mask)
@@ -40,10 +40,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_number_of_matching_values() {
-        let test_gens = vec![Generator::new(65, 16807), Generator::new(8921, 48271)];
+    fn test_number_of_matching_values_1() {
+        let test_gens = vec![Generator::new(65, 16807, 1), Generator::new(8921, 48271, 1)];
         let mut test_judge = Judge::new(&test_gens, 65535);
 
         assert_eq!(test_judge.number_of_matching_values(40_000_000), 588);
+    }
+
+    #[test]
+    fn test_number_of_matching_values_4_8() {
+        let test_gens = vec![Generator::new(65, 16807, 4), Generator::new(8921, 48271, 8)];
+        let mut test_judge = Judge::new(&test_gens, 65535);
+
+        assert_eq!(test_judge.number_of_matching_values(5_000_000), 309);
     }
 }

@@ -18,13 +18,23 @@ pub fn run_day_15() {
         })
         .collect();
 
-    let gen_a = Generator::new(gen_seeds[0], 16807);
-    let gen_b = Generator::new(gen_seeds[1], 48271);
+    let gen_a_1 = Generator::new(gen_seeds[0], 16807, 1);
+    let gen_b_1 = Generator::new(gen_seeds[1], 48271, 1);
 
-    let mut part_1_judge = Judge::new(&[gen_a, gen_b], 65535);
+    let mut part_1_judge = Judge::new(&[gen_a_1, gen_b_1], 65535);
 
     println!(
         "Day 15, Part 1: {}",
         part_1_judge.number_of_matching_values(40_000_000)
+    );
+
+    let gen_a_4 = Generator::new(gen_seeds[0], 16807, 4);
+    let gen_b_8 = Generator::new(gen_seeds[1], 48271, 8);
+
+    let mut part_2_judge = Judge::new(&[gen_a_4, gen_b_8], 65535);
+
+    println!(
+        "Day 15, Part 2: {}",
+        part_2_judge.number_of_matching_values(5_000_000)
     );
 }
