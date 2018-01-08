@@ -29,10 +29,29 @@ impl SpinLock {
         }
     }
 
+    pub fn short_cicuit_after_index(&self, steps: usize, index: usize) -> Option<usize> {
+        let mut temp_vec = Vec::new();
+        let mut current_index = 0;
+        let mut span = 0;
 
+        for current_element in 0..(steps + 1) {
+            if current_index <= (index + 1) {
+                temp_vec.insert(current_index, current_element);
+            }
 
-    pub fn short_cicuit_after_value(&self, step: usize, value: usize) -> Option<usize> {
-        let temp_vec = self.clone().nth(step).unwrap();
+            span += 1;
+            current_index = (current_index + self.step) % span + 1;
+        }
+
+        match temp_vec.get(index + 1) {
+            None => None,
+            Some(&number) => Some(number),
+        }
+    }
+
+    pub fn short_cicuit_after_value(&self, steps: usize, value: usize) -> Option<usize> {
+        let temp_vec = self.clone().nth(steps).unwrap();
+
         match temp_vec.iter().position(|&x| x == value) {
             None => None,
             Some(index) => Some(temp_vec[(index + 1) % temp_vec.len()]),
@@ -50,7 +69,12 @@ mod tests {
     }
 
     #[test]
-    fn test_short_cicuit_value() {
+    fn test_short_cicuit_after_index() {
+        assert_eq!(SpinLock::new(3).short_cicuit_after_index(5, 2), Some(4));
+    }
+
+    #[test]
+    fn test_short_cicuit_after_value() {
         assert_eq!(
             SpinLock::new(3).short_cicuit_after_value(2017, 2017),
             Some(638)

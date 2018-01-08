@@ -12,6 +12,6 @@ pub fn run_day_17() {
 
     println!(
         "Day 17, Part 2: {}",
-        spinlock.short_cicuit_after_value(50_000_000, 0).unwrap()
+        spinlock.short_cicuit_after_index(50_000_000, 0).unwrap()
     );
 }
