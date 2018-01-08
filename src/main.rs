@@ -18,6 +18,14 @@ mod day_14;
 mod day_15;
 mod day_16;
 mod day_17;
+mod day_18;
+// mod day_19;
+// mod day_20;
+// mod day_21;
+// mod day_22;
+// mod day_23;
+// mod day_24;
+// mod day_25;
 
 fn print_seperator() {
     println!("-------------------------------");
@@ -42,7 +50,7 @@ fn run_day(day: usize) {
         15 => day_15::run_day_15(),
         16 => day_16::run_day_16(),
         17 => day_17::run_day_17(),
-        // 18 => day_18::run_day_18(),
+        18 => day_18::run_day_18(),
         // 19 => day_19::run_day_19(),
         // 20 => day_20::run_day_20(),
         // 21 => day_21::run_day_21(),
