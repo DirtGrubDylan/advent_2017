@@ -17,59 +17,45 @@ mod day_13;
 mod day_14;
 mod day_15;
 mod day_16;
+mod day_17;
 
 fn print_seperator() {
     println!("-------------------------------");
 }
 
+fn run_day(day: usize) {
+    match day {
+        1 => day_1::run_day_1() ,
+        2 => day_2::run_day_2(),
+        3 => day_3::run_day_3(),
+        4 => day_4::run_day_4(),
+        5 => day_5::run_day_5(),
+        6 => day_6::run_day_6(),
+        7 => day_7::run_day_7(),
+        8 => day_8::run_day_8(),
+        9 => day_9::run_day_9(),
+        10 => day_10::run_day_10(),
+        11 => day_11::run_day_11(),
+        12 => day_12::run_day_12(),
+        13 => day_13::run_day_13(),
+        14 => day_14::run_day_14(),
+        15 => day_15::run_day_15(),
+        16 => day_16::run_day_16(),
+        17 => day_17::run_day_17(),
+        // 18 => day_18::run_day_18(),
+        // 19 => day_19::run_day_19(),
+        // 20 => day_20::run_day_20(),
+        // 21 => day_21::run_day_21(),
+        // 22 => day_22::run_day_22(),
+        // 23 => day_23::run_day_23(),
+        // 24 => day_24::run_day_24(),
+        // 25 => day_25::run_day_25(),
+        _ => (),
+    }
+}
+
 fn main() {
     print_seperator();
-
-    day_1::run_day_1();
-    print_seperator();
-
-    day_2::run_day_2();
-    print_seperator();
-
-    day_3::run_day_3();
-    print_seperator();
-
-    day_4::run_day_4();
-    print_seperator();
-
-    day_5::run_day_5();
-    print_seperator();
-
-    day_6::run_day_6();
-    print_seperator();
-
-    day_7::run_day_7();
-    print_seperator();
-
-    day_8::run_day_8();
-    print_seperator();
-
-    day_9::run_day_9();
-    print_seperator();
-
-    day_10::run_day_10();
-    print_seperator();
-
-    day_11::run_day_11();
-    print_seperator();
-
-    day_12::run_day_12();
-    print_seperator();
-
-    day_13::run_day_13();
-    print_seperator();
-
-    day_14::run_day_14();
-    print_seperator();
-
-    day_15::run_day_15();
-    print_seperator();
-
-    day_16::run_day_16();
+    run_day(17);
     print_seperator();
 }
