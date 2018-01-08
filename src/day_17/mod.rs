@@ -1,9 +1,15 @@
 mod spin_lock;
 
+use file_reader::to_string_vector;
+
 use self::spin_lock::SpinLock;
 
 pub fn run_day_17() {
-    let spinlock = SpinLock::new(348);
+    let data = to_string_vector("inputs/day_17.txt").unwrap();
+
+    let input = data[0].parse().unwrap();
+
+    let spinlock = SpinLock::new(input);
 
     println!(
         "Day 17, Part 1: {}",
