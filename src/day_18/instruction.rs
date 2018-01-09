@@ -14,25 +14,15 @@ impl Instruction {
         let info: Vec<&str> = instruction.split_whitespace().collect();
 
         match info[0] {
-            "set" => {
-                Instruction::Set(info[1].chars().nth(0).unwrap(), String::from(info[2]));
-            }
-            "add" => {
-                Instruction::Add(info[1].chars().nth(0).unwrap(), String::from(info[2]));
-            }
-            "mod" => {
-                Instruction::Mod(info[1].chars().nth(0).unwrap(), String::from(info[2]));
-            }
-            "mul" => {
-                Instruction::Mutliply(info[1].chars().nth(0).unwrap(), String::from(info[2]));
-            }
-            "rcv" => {}
-            "snd" => {}
-            "jgz" => {}
-            _ => {}
+            "set" => Instruction::Set(info[1].chars().nth(0).unwrap(), String::from(info[2])),
+            "add" => Instruction::Add(info[1].chars().nth(0).unwrap(), String::from(info[2])),
+            "mod" => Instruction::Mod(info[1].chars().nth(0).unwrap(), String::from(info[2])),
+            "mul" => Instruction::Mutliply(info[1].chars().nth(0).unwrap(), String::from(info[2])),
+            "rcv" => Instruction::Recover(String::from(info[1])),
+            "snd" => Instruction::PlaySound(String::from(info[1])),
+            "jgz" => Instruction::Jump(String::from(info[1]), String::from(info[2])),
+            _ => panic!(),
         }
-
-        unimplemented!();
     }
 }
 
@@ -56,6 +46,7 @@ mod tests {
             Instruction::Mod('a', String::from("5")),
             Instruction::PlaySound(String::from("a")),
             Instruction::Set('a', String::from("0")),
+            Instruction::Recover(String::from("a")),
             Instruction::Jump(String::from("a"), String::from("-1")),
             Instruction::Set('a', String::from("1")),
             Instruction::Jump(String::from("a"), String::from("-2")),
