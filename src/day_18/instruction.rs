@@ -1,9 +1,9 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Instruction {
-    Set(char, String),
-    Add(char, String),
-    Mod(char, String),
-    Mutliply(char, String),
+    Set(String, String),
+    Add(String, String),
+    Mod(String, String),
+    Mutliply(String, String),
     Recover(String),
     PlaySound(String),
     Jump(String, String),
@@ -14,10 +14,10 @@ impl Instruction {
         let info: Vec<&str> = instruction.split_whitespace().collect();
 
         match info[0] {
-            "set" => Instruction::Set(info[1].chars().nth(0).unwrap(), String::from(info[2])),
-            "add" => Instruction::Add(info[1].chars().nth(0).unwrap(), String::from(info[2])),
-            "mod" => Instruction::Mod(info[1].chars().nth(0).unwrap(), String::from(info[2])),
-            "mul" => Instruction::Mutliply(info[1].chars().nth(0).unwrap(), String::from(info[2])),
+            "set" => Instruction::Set(String::from(info[1]), String::from(info[2])),
+            "add" => Instruction::Add(String::from(info[1]), String::from(info[2])),
+            "mod" => Instruction::Mod(String::from(info[1]), String::from(info[2])),
+            "mul" => Instruction::Mutliply(String::from(info[1]), String::from(info[2])),
             "rcv" => Instruction::Recover(String::from(info[1])),
             "snd" => Instruction::PlaySound(String::from(info[1])),
             "jgz" => Instruction::Jump(String::from(info[1]), String::from(info[2])),
@@ -40,15 +40,15 @@ mod tests {
             .collect();
 
         let expected = vec![
-            Instruction::Set('a', String::from("1")),
-            Instruction::Add('a', String::from("2")),
-            Instruction::Mutliply('a', String::from("a")),
-            Instruction::Mod('a', String::from("5")),
+            Instruction::Set(String::from("a"), String::from("1")),
+            Instruction::Add(String::from("a"), String::from("2")),
+            Instruction::Mutliply(String::from("a"), String::from("a")),
+            Instruction::Mod(String::from("a"), String::from("5")),
             Instruction::PlaySound(String::from("a")),
-            Instruction::Set('a', String::from("0")),
+            Instruction::Set(String::from("a"), String::from("0")),
             Instruction::Recover(String::from("a")),
             Instruction::Jump(String::from("a"), String::from("-1")),
-            Instruction::Set('a', String::from("1")),
+            Instruction::Set(String::from("a"), String::from("1")),
             Instruction::Jump(String::from("a"), String::from("-2")),
         ];
 
