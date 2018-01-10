@@ -1,3 +1,4 @@
+mod program;
 mod registry;
 mod instruction;
 
@@ -12,10 +13,10 @@ pub fn run_day_18() {
         .into_iter()
         .map(|s| Instruction::new(&s))
         .collect();
-    let mut registry = Registry::new();
+    let mut registry = Registry::new_with_instructions(0, &instructions);
 
     println!(
         "Day 18, Part 1: {}",
-        registry.first_recovered_sound(&instructions).unwrap()
+        registry.first_recovered_sound().unwrap()
     );
 }

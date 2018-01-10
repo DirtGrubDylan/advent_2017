@@ -4,8 +4,8 @@ pub enum Instruction {
     Add(String, String),
     Mod(String, String),
     Mutliply(String, String),
-    Recover(String),
-    PlaySound(String),
+    Snd(String),
+    Recieve(String),
     Jump(String, String),
 }
 
@@ -18,8 +18,8 @@ impl Instruction {
             "add" => Instruction::Add(String::from(info[1]), String::from(info[2])),
             "mod" => Instruction::Mod(String::from(info[1]), String::from(info[2])),
             "mul" => Instruction::Mutliply(String::from(info[1]), String::from(info[2])),
-            "rcv" => Instruction::Recover(String::from(info[1])),
-            "snd" => Instruction::PlaySound(String::from(info[1])),
+            "rcv" => Instruction::Recieve(String::from(info[1])),
+            "snd" => Instruction::Snd(String::from(info[1])),
             "jgz" => Instruction::Jump(String::from(info[1]), String::from(info[2])),
             _ => panic!(),
         }
@@ -44,9 +44,9 @@ mod tests {
             Instruction::Add(String::from("a"), String::from("2")),
             Instruction::Mutliply(String::from("a"), String::from("a")),
             Instruction::Mod(String::from("a"), String::from("5")),
-            Instruction::PlaySound(String::from("a")),
+            Instruction::Snd(String::from("a")),
             Instruction::Set(String::from("a"), String::from("0")),
-            Instruction::Recover(String::from("a")),
+            Instruction::Recieve(String::from("a")),
             Instruction::Jump(String::from("a"), String::from("-1")),
             Instruction::Set(String::from("a"), String::from("1")),
             Instruction::Jump(String::from("a"), String::from("-2")),
