@@ -77,7 +77,7 @@ impl Registry {
                 let temp_value = self.value_of(value);
 
                 self.set_register_value("sound", temp_value);
-                self.to_send.push_back(temp_value);
+                self.to_send.push_front(temp_value);
             }
             &Instruction::Recieve(_) => {}
             &Instruction::Jump(ref id, ref value) => {
@@ -140,8 +140,6 @@ impl Iterator for Registry {
             index = self.value_of("index") + 1;
             self.set_register_value("index", index);
         }
-
-        println!("{:?}", self.registers);
 
         if 0 <= index && index < number_of_instructions {
             self.waiting = true;
