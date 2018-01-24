@@ -13,6 +13,7 @@ pub struct Registry {
 }
 
 impl Registry {
+    #[allow(dead_code)]
     pub fn new(id: isize) -> Registry {
         let mut temp_map = HashMap::new();
 
