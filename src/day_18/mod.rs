@@ -4,6 +4,7 @@ mod instruction;
 
 use file_reader::to_string_vector;
 
+use self::program::Program;
 use self::registry::Registry;
 use self::instruction::Instruction;
 
@@ -14,9 +15,14 @@ pub fn run_day_18() {
         .map(|s| Instruction::new(&s))
         .collect();
     let mut registry = Registry::new_with_instructions(0, &instructions);
+    let mut program = Program::new(&instructions);
 
     println!(
         "Day 18, Part 1: {}",
-        registry.first_recovered_sound().unwrap()
+        registry.last_recovered_sound().unwrap()
     );
+
+    program.execute();
+
+    println!("Day 18, Part 2: {}", program.second_registry.all_sent);
 }

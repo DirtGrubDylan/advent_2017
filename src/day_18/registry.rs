@@ -5,9 +5,11 @@ use super::instruction::Instruction;
 #[derive(Debug)]
 pub struct Registry {
     pub registers: HashMap<String, isize>,
+    pub all_sent: usize,
+    pub to_send: VecDeque<isize>,
+    pub waiting: bool,
+    id: isize,
     instructions: Vec<Instruction>,
-    to_send: VecDeque<isize>,
-    waiting: bool,
 }
 
 impl Registry {
@@ -19,9 +21,11 @@ impl Registry {
         temp_map.insert(String::from("p"), id);
 
         Registry {
+            id: id,
             registers: temp_map,
-            instructions: Vec::new(),
             to_send: VecDeque::new(),
+            instructions: Vec::new(),
+            all_sent: 0,
             waiting: false,
         }
     }
@@ -34,17 +38,19 @@ impl Registry {
         temp_map.insert(String::from("p"), id);
 
         Registry {
+            id: id,
             registers: temp_map,
-            instructions: instructions.clone().to_owned(),
             to_send: VecDeque::new(),
+            instructions: instructions.clone().to_owned(),
+            all_sent: 0,
             waiting: false,
         }
     }
 
-    pub fn first_recovered_sound(&mut self) -> Option<isize> {
+    pub fn last_recovered_sound(&mut self) -> Option<isize> {
         match self.next() {
             None => None,
-            Some(v) => match v.front() {
+            Some(_) => match self.to_send.back() {
                 None => None,
                 Some(&num) => Some(num),
             },
@@ -77,7 +83,8 @@ impl Registry {
                 let temp_value = self.value_of(value);
 
                 self.set_register_value("sound", temp_value);
-                self.to_send.push_front(temp_value);
+                self.to_send.push_back(temp_value);
+                self.all_sent += 1;
             }
             &Instruction::Recieve(_) => {}
             &Instruction::Jump(ref id, ref value) => {
@@ -96,7 +103,7 @@ impl Registry {
         let instruction = self.instructions[index as usize].clone();
 
         match instruction {
-            Instruction::Recieve(ref id) => if let Some(&value) = sent_data.front() {
+            Instruction::Recieve(ref id) => if let Some(value) = sent_data.pop_front() {
                 self.set_register_value(id, value);
                 self.set_register_value("index", index + 1);
                 self.waiting = false;
@@ -121,7 +128,7 @@ impl Registry {
 }
 
 impl Iterator for Registry {
-    type Item = VecDeque<isize>;
+    type Item = ();
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut index = self.value_of("index");
@@ -144,8 +151,10 @@ impl Iterator for Registry {
         if 0 <= index && index < number_of_instructions {
             self.waiting = true;
 
-            Some(self.to_send.clone())
+            Some(())
         } else {
+            self.waiting = false;
+
             None
         }
     }
@@ -250,7 +259,7 @@ mod tests {
     }
 
     #[test]
-    fn test_first_recovered_sound() {
+    fn test_last_recovered_sound() {
         let test_instructions: Vec<Instruction> = to_string_vector("test_inputs/day_18_part_1.txt")
             .unwrap()
             .into_iter()
@@ -258,7 +267,7 @@ mod tests {
             .collect();
         let mut test_registry = Registry::new_with_instructions(0, &test_instructions);
 
-        assert_eq!(test_registry.first_recovered_sound(), Some(4));
+        assert_eq!(test_registry.last_recovered_sound(), Some(4));
     }
 
     #[test]
@@ -270,8 +279,9 @@ mod tests {
             .collect();
         let mut test_registry = Registry::new_with_instructions(0, &test_instructions);
 
-        assert_eq!(test_registry.next().unwrap().front(), Some(&4));
+        assert!(test_registry.next().is_some());
         assert!(test_registry.waiting);
+        assert_eq!(test_registry.to_send.front(), Some(&4));
     }
 
     #[test]
@@ -284,15 +294,15 @@ mod tests {
         let mut test_registry_0 = Registry::new_with_instructions(0, &test_instructions);
         let mut test_registry_1 = Registry::new_with_instructions(1, &test_instructions);
 
-        let mut v_0 = test_registry_0.next().unwrap();
-        test_registry_1.next().unwrap();
+        test_registry_0.next();
+        test_registry_1.next();
 
         assert_eq!(test_registry_0.value_of("a"), 0);
         assert_eq!(test_registry_1.value_of("a"), 0);
         assert_eq!(test_registry_0.value_of("b"), 0);
         assert_eq!(test_registry_1.value_of("b"), 0);
 
-        test_registry_1.recieve_from(&mut v_0);
+        test_registry_1.recieve_from(&mut test_registry_0.to_send);
 
         assert_eq!(test_registry_0.value_of("b"), 0);
         assert_eq!(test_registry_1.value_of("b"), 4);
