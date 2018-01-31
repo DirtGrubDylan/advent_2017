@@ -7,9 +7,15 @@ pub struct Grid {
 
 impl Grid {
     pub fn new(map: &[String]) -> Grid {
-        let temp_v = map.iter()
+        let mut temp_v: Vec<Vec<char>> = map.iter()
             .map(|s| s.chars().collect::<Vec<char>>())
             .collect();
+
+        let max_length = temp_v.iter().map(|v| v.len()).max().unwrap();
+
+        for v in &mut temp_v {
+            v.resize(max_length, ' ');
+        }
 
         Grid { inner: temp_v }
     }
@@ -55,8 +61,9 @@ mod tests {
         assert_eq!(test_grid.get((-1, -3)), None);
         assert_eq!(test_grid.get((-1, 3)), None);
         assert_eq!(test_grid.get((1, -3)), None);
-        assert_eq!(test_grid.get((0, 6)), None);
         assert_eq!(test_grid.get((6, 0)), None);
+        assert_eq!(test_grid.get((0, 15)), None);
+        assert_eq!(test_grid.get((1, 12)), Some(' '));
         assert_eq!(test_grid.get((0, 0)), Some(' '));
         assert_eq!(test_grid.get((0, 5)), Some('|'));
         assert_eq!(test_grid.get((3, 10)), Some('E'));
