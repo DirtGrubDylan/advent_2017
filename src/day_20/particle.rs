@@ -1,3 +1,5 @@
+use regex::Regex;
+
 type Coords = (i32, i32, i32);
 
 fn manhattan_distance(coords: &Coords) -> u32 {
@@ -29,8 +31,28 @@ impl Particle {
         }
     }
 
-    pub fn new_from_str(info: &str) -> Particle {
-        unimplemented!();
+    pub fn new_from_str(info: &str) -> Result<Particle, String> {
+        let re = Regex::new(r"<(-?\d*),(-?\d*),(-?\d*)>").unwrap();
+
+        let temp_v: Vec<Coords> = re.captures_iter(info)
+            .map(|capture| {
+                let x = (&capture[1]).parse::<i32>().expect("Bad x-value!");
+                let y = (&capture[2]).parse::<i32>().expect("Bad y-value!");
+                let z = (&capture[3]).parse::<i32>().expect("Bad z-value!");
+
+                (x, y, z)
+            })
+            .collect();
+
+        if temp_v.len() != 3 {
+            Err(String::from("Bad information sent!"))
+        } else {
+            Ok(Particle {
+                position: temp_v[0],
+                velocity: temp_v[1],
+                acceleration: temp_v[2],
+            })
+        }
     }
 
     pub fn distance_to_center(&self) -> u32 {
@@ -105,5 +127,16 @@ mod tests {
 
         assert_eq!(test_particle_0.cycles_until_stable(), 5);
         assert_eq!(test_particle_1.cycles_until_stable(), 2);
+    }
+
+    #[test]
+    fn test_new_from_str() {
+        let test_particle_0 =
+            Particle::new_from_str("p=<-11104,1791,5208>, v=<-6,36,-84>, a=<19,-5,-4>");
+        let test_particle_1 =
+            Particle::new_from_str("p=<-11104,1791>, v=<-6,36,-84>, a=<19,-5,-4>");
+
+        assert!(test_particle_0.is_ok());
+        assert!(test_particle_1.is_err());
     }
 }

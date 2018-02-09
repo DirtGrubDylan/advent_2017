@@ -1,4 +1,5 @@
 #![feature(entry_and_modify)]
+extern crate regex;
 
 pub mod file_reader;
 mod day_1;
