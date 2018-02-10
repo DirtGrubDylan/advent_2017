@@ -2,7 +2,7 @@ use regex::Regex;
 
 type Coords = (i32, i32, i32);
 
-fn manhattan_distance(coords: &Coords) -> u32 {
+pub fn manhattan_distance(coords: &Coords) -> u32 {
     (coords.0.abs() + coords.1.abs() + coords.2.abs()) as u32
 }
 
@@ -47,16 +47,8 @@ impl Particle {
         if temp_v.len() != 3 {
             Err(String::from("Bad information sent!"))
         } else {
-            Ok(Particle {
-                position: temp_v[0],
-                velocity: temp_v[1],
-                acceleration: temp_v[2],
-            })
+            Ok(Particle::new(temp_v[0], temp_v[1], temp_v[2]))
         }
-    }
-
-    pub fn distance_to_center(&self) -> u32 {
-        manhattan_distance(&self.position)
     }
 
     pub fn acceleration_strength(&self) -> u32 {
@@ -91,6 +83,17 @@ impl Particle {
         }
 
         cycles
+    }
+
+    pub fn position_at(&self, cycles: u32) -> Coords {
+        let v_multiplier = cycles as i32;
+        let a_multiplier = v_multiplier * (v_multiplier + 1) / 2;
+
+        (
+            self.position.0 + v_multiplier * self.velocity.0 + a_multiplier * self.acceleration.0,
+            self.position.1 + v_multiplier * self.velocity.1 + a_multiplier * self.acceleration.1,
+            self.position.2 + v_multiplier * self.velocity.2 + a_multiplier * self.acceleration.2,
+        )
     }
 }
 
@@ -138,5 +141,17 @@ mod tests {
 
         assert!(test_particle_0.is_ok());
         assert!(test_particle_1.is_err());
+    }
+
+    #[test]
+    fn test_position_at() {
+        let test_particle_0 = Particle::new((3, 0, 0), (2, 0, 0), (-1, 0, 0));
+        let test_particle_1 = Particle::new((4, 0, 0), (0, 0, 0), (-2, 0, 0));
+
+        let stable_0 = test_particle_0.cycles_until_stable();
+        let stable_1 = test_particle_1.cycles_until_stable();
+
+        assert_eq!(test_particle_0.position_at(stable_0), (-2, 0, 0));
+        assert_eq!(test_particle_1.position_at(stable_1), (-2, 0, 0));
     }
 }

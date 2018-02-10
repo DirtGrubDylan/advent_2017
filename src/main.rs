@@ -65,6 +65,6 @@ fn run_day(day: usize) {
 
 fn main() {
     print_seperator();
-    run_day(19);
+    run_day(20);
     print_seperator();
 }

@@ -9,4 +9,12 @@
 mod gpu;
 mod particle;
 
-pub fn run_day_20() {}
+use self::gpu::GPU;
+use file_reader::to_string_vector;
+
+pub fn run_day_20() {
+    let input = to_string_vector("inputs/day_20.txt").unwrap();
+    let gpu = GPU::new(&input).unwrap();
+
+    println!("Day 20, Part 1: {}", gpu.closest_particle());
+}
